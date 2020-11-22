@@ -1,0 +1,15 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: g++ build Debug project with CMake",
+            "command": "mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug .. && make",
+        },
+        {
+            "type": "shell",
+            "label": "C/C++: g++ build project with CMake",
+            "command": "mkdir -p build && cd build && cmake .. && make",
+        }
+    ],
+    "version": "2.0.0"
+}
