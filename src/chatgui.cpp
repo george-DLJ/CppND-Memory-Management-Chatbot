@@ -5,6 +5,7 @@
 #include "chatbot.h"
 #include "chatlogic.h"
 #include "chatgui.h"
+#include <memory>
 
 // size of chatbot window
 const int width = 414;
@@ -118,7 +119,8 @@ ChatBotPanelDialog::ChatBotPanelDialog(wxWindow *parent, wxWindowID id)
     ////
 
     // create chat logic instance
-    _chatLogic = new ChatLogic(); 
+    //_chatLogic = new ChatLogic(); //DEPRECATED: replaced by unique pointer
+    _chatLogic = std::unique_ptr<ChatLogic>(new ChatLogic()); //Create unique_pointer
 
     // pass pointer to chatbot dialog so answers can be displayed in GUI
     _chatLogic->SetPanelDialogHandle(this);
@@ -134,8 +136,14 @@ ChatBotPanelDialog::~ChatBotPanelDialog()
 {
     //// STUDENT CODE
     ////
-
-    delete _chatLogic;
+    // According to  https://stackoverflow.com/a/46383366/1806436
+    // There are to options to delete the unique pointer:
+    // 1. automaticaly when it goes out of scope:
+    //    succesfully tested: when this destructor goes out of scope, 
+    //    the ChatLogic Destructor is called without need to use smrtPtr.reset() function.
+    // 2. reseting it (_uniquePointer.reset() )
+    //    forces the delete/destructor of managed object. Pointer is still active.
+    //      _chatLogic.reset(); //deletes managed object.
 
     ////
     //// EOF STUDENT CODE
