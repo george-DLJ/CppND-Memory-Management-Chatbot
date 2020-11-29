@@ -11,7 +11,12 @@ GraphNode::~GraphNode()
     //// STUDENT CODE
     ////
 
-    delete _chatBot; 
+    //delete _chatBot; //TASK0. Bug: this delete _chatBot shouldn't be here. 
+                       // Problem: chatbot is deleted twice: 
+                       //  - once from chatlogic, which has created it using new --> this is correct
+                       //  - once here on GraphNode, which has become it as reference. --> therefore this is wrong
+                       // GraphNode does not creates a new  chatBot, it just references
+                       // one, therefore it should not delete it. 
 
     ////
     //// EOF STUDENT CODE
