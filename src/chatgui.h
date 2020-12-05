@@ -2,6 +2,7 @@
 #define CHATGUI_H_
 
 #include <wx/wx.h>
+#include <memory>
 
 class ChatLogic; // forward declaration
 
@@ -15,8 +16,12 @@ private:
 
     //// STUDENT CODE
     ////
+    // TASK 1: make chatlogic exclusive resource using appropiate smart pointer.
+    // TODO: change to smart_pointer (unique pointer?)
+    //            std::unique_ptr<Type> p(new Type);
 
-    ChatLogic *_chatLogic;
+    std::unique_ptr<ChatLogic> _chatLogic; 
+    //ChatLogic *_chatLogic; //DEPRECATED: replace raw pointer for unique pointer.
 
     ////
     //// EOF STUDENT CODE
@@ -27,7 +32,10 @@ public:
     ~ChatBotPanelDialog();
 
     // getter / setter
-    ChatLogic *GetChatLogicHandle() { return _chatLogic; }
+    ChatLogic *GetChatLogicHandle() { 
+        return _chatLogic.get(); // return the raw pointer from unique pointer.
+        // TODO: (?) Is good idea to return the raw pointer of the unique_pointr? 
+    }
 
     // events
     void paintEvent(wxPaintEvent &evt);
