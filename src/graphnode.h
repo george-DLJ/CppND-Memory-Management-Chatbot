@@ -5,7 +5,7 @@
 #include <string>
 #include "chatbot.h"
 
-#include <memory>
+#include <memory> //Task4: this include is necessary.
 
 // forward declarations
 class GraphEdge;
@@ -21,8 +21,8 @@ private:
 
     // data handles (not owned)
     std::vector<GraphEdge *> _parentEdges; // edges to preceding nodes 
-    ChatBot *_chatBot;
-
+    //ChatBot *_chatBot; // Task 5: not a handle any more, but an object.
+    ChatBot _chatBot;     // task 5: now Graphnode owns the chatbot.  
     ////
     //// EOF STUDENT CODE
 
@@ -51,7 +51,7 @@ public:
     //// STUDENT CODE
     ////
 
-    void MoveChatbotHere(ChatBot *chatbot);
+    void MoveChatbotHere(ChatBot &&chatbot);
 
     ////
     //// EOF STUDENT CODE

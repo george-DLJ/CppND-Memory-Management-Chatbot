@@ -18,7 +18,7 @@ ChatLogic::ChatLogic()
     ////
 
     // create instance of chatbot
-    _chatBot = new ChatBot("../images/chatbot.png");
+    //_chatBot = new ChatBot("../images/chatbot.png"); //Task5: Remove ownership relation of ChatBot
 
     // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
     _chatBot->SetChatLogicHandle(this);
@@ -302,10 +302,28 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     //     }
     // }
 
+    // Task 5: code to replace:
     // add chatbot to graph root node
-    _chatBot->SetRootNode(rootNode); 
-    rootNode->MoveChatbotHere(_chatBot);
+    //_chatBot->SetRootNode(rootNode);  //REMOVE
+    //rootNode->MoveChatbotHere(_chatBot); //REMOVE
     
+    //Task 5: 
+    // 1. create a local ChatBot instance on the stack
+    ChatBot chatBot  = new ChatBot("../images/chatbot.png");
+    
+    // alternative: std::unique_ptr<ChatBot> chatBot = std::make_unique<ChatBot>("../images/chatbot.png");
+    // 2. use move semantics to pass the ChatBot instance into the root node.
+    // (?) It makes no sens pass a pointer to a local variable!
+    //std::unique_ptr<ChatBot> chatBotptr = std::make_unique<ChatBot>(chatBot);
+    //_chatBot = chatBotptr.get();
+    //rootNode->MoveChatbotHere(std::make_unique<ChatBot>(chatBot)); //Alternative?
+    chatBot->SetRootNode(rootNode); 
+    rootNode->MoveChatbotHere(std::move(chatBot));
+
+    // 3. The member _chatBot remains so it van be used as a communication handle
+    //    what should I do with _chatBot? now contains nothing and was not initialized!
+
+
     ////
     //// EOF STUDENT CODE
 }
