@@ -32,9 +32,18 @@ void GraphNode::AddEdgeToParentNode(GraphEdge *edge)
     _parentEdges.push_back(edge);
 }
 
-void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
+//void GraphNode::AddEdgeToChildNode(GraphEdge *edge)
+/**
+ * NOTE: Grpahnode takes ownership of incomming edges 
+ * NOTICE: the unique_ptr is moved twice: 
+ *  - once from caller to function and 
+ *  - once inside the function to vector
+ *  for detailed answer see: AddEdgeToChildNode 
+ */
+void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge) //function takes ownoership of the object
 {
-    _childEdges.push_back(edge);
+    //_childEdges.push_back(edge);
+    _childEdges.emplace_back(std::move(edge));
 }
 
 //// STUDENT CODE
@@ -58,7 +67,7 @@ GraphEdge *GraphNode::GetChildEdgeAtIndex(int index)
     //// STUDENT CODE
     ////
 
-    return _childEdges[index];
+    return _childEdges[index].get();// return raw pointer to owned object(unique_ptr)
 
     ////
     //// EOF STUDENT CODE

@@ -41,9 +41,20 @@ ChatLogic::~ChatLogic()
     //{ delete *it; } // REMOVE
 
     // delete all edges
+    // REMOVE: Reason: edge elements in _edges are now smart pointers.
+    // BEFORE: 
+    //  - edge objects where created here: GraphEdge *edge = new Graphedge(id) 
+    //  - therefore they should be delted on this class destructor.
+    // NOW: 
+    //  - edge are smart pointers (unique_ptr) 
+    //  - For this reason, chatlogic does not need to keep track of created objects (with new)
+    //    to delete them on the destructor.
+    //  - In fact the delete on destructor generates an Memory error due to try of deleting
+    //    freed memory!
     for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
     {
-        delete *it;
+        //delete *it; //is not the task of Chatlogic to delete the edges, because they
+                    // are now smpart pointers.
     }
 
     ////
@@ -174,17 +185,33 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                             auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](const std::unique_ptr<GraphNode> &node) { return node->GetID() == std::stoi(childToken->second); });
 
                             // create new edge
-                            GraphEdge *edge = new GraphEdge(id);
+                            std::unique_ptr<GraphEdge> edge(new GraphEdge(id));
+                            // alternative: std::unique_ptr<GraphEdge> edge = std::make_unique<GraphEdge>(id);
                             edge->SetChildNode(childNode->get());
                             edge->SetParentNode(parentNode->get());
-                            _edges.push_back(edge);
+                            _edges.push_back(edge.get()); //NOTE: this line keeps track of created edges. 
+                            // But is not necessary any more after changing the edge instances  from raw pointer to 
+                            // smart_pointer. 
+                            // BEFORE: 
+                            //  - edge objects where created here: GraphEdge *edge = new Graphedge(id) 
+                            //  - therefore they should be delted on this class destructor.
+                            // NOW: 
+                            //  - edge are smart pointers (unique_ptr) 
+                            //  - For this reason, chatlogic does not need to keep track of created objects (with new)
+                            //    to delete them on the destructor.
+                            //  - In fact the delete on destructor generates an Memory error/Memory Leak?
 
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
 
                             // store reference in child node and parent node
-                            (*childNode)->AddEdgeToParentNode(edge); //TODO: change
-                            (*parentNode)->AddEdgeToChildNode(edge); //TODO: change 
+                            // Task4 changes:
+                            //  1- Edge is now a unique_ptr 
+                            //  2- childnode gets a raw pointer through MySmartPtr.get()
+                            //  3- Ownership is passed to GraphNode instance through AddEdgeChildNode function 
+                            //     Therefore a std::move(myUniquePtr) is mandatory.
+                            (*childNode)->AddEdgeToParentNode(edge.get()); //DONE: changed to accept raw pointer
+                            (*parentNode)->AddEdgeToChildNode(std::move(edge)); //DONE: changed to move unique_ptr
                         }
 
                         ////
