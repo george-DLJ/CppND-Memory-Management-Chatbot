@@ -49,16 +49,16 @@ void GraphNode::AddEdgeToChildNode(std::unique_ptr<GraphEdge> edge) //function t
 //// STUDENT CODE
 ////
 //void GraphNode::MoveChatbotHere(ChatBot *chatbot)
-void GraphNode::MoveChatbotHere(ChatBot &&chatbot)
+void GraphNode::MoveChatbotHere(ChatBot &&chatBot)
 {
-    _chatBot = chatbot;
+    _chatBot = chatBot;
     _chatBot.SetCurrentNode(this);
 }
 
 void GraphNode::MoveChatbotToNewNode(GraphNode *newNode)
 {
-    newNode->MoveChatbotHere(_chatBot);
-    _chatBot = nullptr; // invalidate pointer at source
+    newNode->MoveChatbotHere(std::move(_chatBot));
+    //_chatBot = nullptr; // invalidate pointer at source //Task5: REMOVED it is not a pointer any more!
 }
 ////
 //// EOF STUDENT CODE

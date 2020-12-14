@@ -21,7 +21,7 @@ ChatLogic::ChatLogic()
     //_chatBot = new ChatBot("../images/chatbot.png"); //Task5: Remove ownership relation of ChatBot
 
     // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
-    _chatBot->SetChatLogicHandle(this);
+    //_chatBot->SetChatLogicHandle(this); //Task5: REMOVED! as now the ChatBot is passed to the Nodes on load Answer Graph from file.
 
     ////
     //// EOF STUDENT CODE
@@ -33,7 +33,7 @@ ChatLogic::~ChatLogic()
     ////
 
     // delete chatbot instance
-    delete _chatBot;
+    //delete _chatBot;  //Task5: REMOVED Chatbot is not owned by Chatlogic any more.
 
     // delete all nodes
     // REMOVE: now delete are handled by the smart pointer, on loosing scope.
@@ -309,15 +309,16 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     
     //Task 5: 
     // 1. create a local ChatBot instance on the stack
-    ChatBot chatBot  = new ChatBot("../images/chatbot.png");
-    
+    ChatBot chatBot("../images/chatbot.png");
+    chatBot.SetChatLogicHandle(this);
     // alternative: std::unique_ptr<ChatBot> chatBot = std::make_unique<ChatBot>("../images/chatbot.png");
     // 2. use move semantics to pass the ChatBot instance into the root node.
     // (?) It makes no sens pass a pointer to a local variable!
     //std::unique_ptr<ChatBot> chatBotptr = std::make_unique<ChatBot>(chatBot);
     //_chatBot = chatBotptr.get();
     //rootNode->MoveChatbotHere(std::make_unique<ChatBot>(chatBot)); //Alternative?
-    chatBot->SetRootNode(rootNode); 
+    chatBot.SetRootNode(rootNode); 
+    _chatBot = &chatBot;
     rootNode->MoveChatbotHere(std::move(chatBot));
 
     // 3. The member _chatBot remains so it van be used as a communication handle
