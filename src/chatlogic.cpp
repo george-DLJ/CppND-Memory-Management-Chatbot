@@ -18,10 +18,10 @@ ChatLogic::ChatLogic()
     ////
 
     // create instance of chatbot
-    _chatBot = new ChatBot("../images/chatbot.png");
+    //_chatBot = new ChatBot("../images/chatbot.png"); //Task5: Remove ownership relation of ChatBot
 
     // add pointer to chatlogic so that chatbot answers can be passed on to the GUI
-    _chatBot->SetChatLogicHandle(this);
+    //_chatBot->SetChatLogicHandle(this); //Task5: REMOVED! as now the ChatBot is passed to the Nodes on load Answer Graph from file.
 
     ////
     //// EOF STUDENT CODE
@@ -33,7 +33,7 @@ ChatLogic::~ChatLogic()
     ////
 
     // delete chatbot instance
-    delete _chatBot;
+    //delete _chatBot;  //Task5: REMOVED Chatbot is not owned by Chatlogic any more.
 
     // delete all nodes
     // REMOVE: now delete are handled by the smart pointer, on loosing scope.
@@ -302,10 +302,25 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     //     }
     // }
 
+    // Task 5: code to replace:
     // add chatbot to graph root node
-    _chatBot->SetRootNode(rootNode); 
-    rootNode->MoveChatbotHere(_chatBot);
+    //_chatBot->SetRootNode(rootNode);  //REMOVE
+    //rootNode->MoveChatbotHere(_chatBot); //REMOVE
     
+    //Task 5: 
+    // 1. create a local ChatBot instance on the stack
+    ChatBot chatBot("../images/chatbot.png");
+    chatBot.SetRootNode(rootNode);      // (?) Do I need to initialitze local chatbot with rootnode and logic Handle?
+    chatBot.SetChatLogicHandle(this);   // (?) I I remove this line it even does not launch main window!
+    // alternative: std::unique_ptr<ChatBot> chatBot = std::make_unique<ChatBot>("../images/chatbot.png");
+    // 2. use move semantics to pass the ChatBot instance into the root node
+    _chatBot = &chatBot; //Create a Handle to chatbot
+    rootNode->MoveChatbotHere(std::move(chatBot));
+
+    // 3. The member _chatBot remains so it van be used as a communication handle
+    //    what should I do with _chatBot? now contains nothing and was not initialized!
+
+
     ////
     //// EOF STUDENT CODE
 }
