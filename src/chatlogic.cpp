@@ -310,15 +310,11 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
     //Task 5: 
     // 1. create a local ChatBot instance on the stack
     ChatBot chatBot("../images/chatbot.png");
-    chatBot.SetChatLogicHandle(this);
+    chatBot.SetRootNode(rootNode);      // (?) Do I need to initialitze local chatbot with rootnode and logic Handle?
+    chatBot.SetChatLogicHandle(this);   // (?) I I remove this line it even does not launch main window!
     // alternative: std::unique_ptr<ChatBot> chatBot = std::make_unique<ChatBot>("../images/chatbot.png");
-    // 2. use move semantics to pass the ChatBot instance into the root node.
-    // (?) It makes no sens pass a pointer to a local variable!
-    //std::unique_ptr<ChatBot> chatBotptr = std::make_unique<ChatBot>(chatBot);
-    //_chatBot = chatBotptr.get();
-    //rootNode->MoveChatbotHere(std::make_unique<ChatBot>(chatBot)); //Alternative?
-    chatBot.SetRootNode(rootNode); 
-    _chatBot = &chatBot;
+    // 2. use move semantics to pass the ChatBot instance into the root node
+    _chatBot = &chatBot; //Create a Handle to chatbot
     rootNode->MoveChatbotHere(std::move(chatBot));
 
     // 3. The member _chatBot remains so it van be used as a communication handle

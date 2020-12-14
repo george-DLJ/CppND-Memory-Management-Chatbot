@@ -47,7 +47,7 @@ ChatBot::~ChatBot()
 // Rule of Three: 
 ChatBot::ChatBot(const ChatBot &source) // Rule of Three/Five 2: copy constructor
 {
-    std::cout << "R2 Copy Constructor: from instance: " << &source << " to instance: " << this << std::endl;
+    std::cout << "ChatBot Copy Constructor: from instance: " << &source << " to instance: " << this << std::endl;
 
     // data handles (owned)
     // Question: how do I allocate the memory for the image?
@@ -70,7 +70,7 @@ ChatBot::ChatBot(const ChatBot &source) // Rule of Three/Five 2: copy constructo
 
 ChatBot &ChatBot::operator=(const ChatBot &source) // Rule of Three/Five 3: copy-asignment Operator  
 {
-    std::cout << "R3 Copy Assignment Operator: from instance: " << &source << " to instance: " << this << std::endl;
+    std::cout << "Chatbot Copy Assignment Operator: from instance: " << &source << " to instance: " << this << std::endl;
     if(this == &source)
         return *this;
     // data handles (owned)
@@ -94,14 +94,15 @@ ChatBot &ChatBot::operator=(const ChatBot &source) // Rule of Three/Five 3: copy
     // Rule of Five 4: Move Constructor
 ChatBot::ChatBot(ChatBot &&source)  // Rule of Five 4: Move Constructor
 {
-    std::cout << "R4 Move Constructor: from instance: " << &source << " to instance: " << this << std::endl;
+    std::cout << "ChatBot Move Constructor: from instance: " << &source << " to instance: " << this << std::endl;
     // 1. Copy the data from the rvalue
     // 1.1 data handles (owned)
     _image = source._image; // here there is no need to allocate new memory!
     // 1.2 data handles (not owned)
     _currentNode = source._currentNode;
     _rootNode = source._rootNode;
-    _chatLogic = source._chatLogic;
+    _chatLogic = source._chatLogic; 
+    _chatLogic->SetChatbotHandle(this);//TASK5: update the chatbot handle 
 
     // 2. invalidate the source (rvalue) immediately after copying as copy is complete, as
     //    NOTICE: 'this' is responsible of the allocated data:
@@ -114,7 +115,7 @@ ChatBot::ChatBot(ChatBot &&source)  // Rule of Five 4: Move Constructor
     
 ChatBot &ChatBot::operator=(ChatBot &&source) // Rule of Five 5: Move Assignment Operator
 {
-    std::cout << "R5 Move Assignment Operator: from instance: " << &source << " to instance: " << this << std::endl;
+    std::cout << "ChatBot Move Assignment Operator: from instance: " << &source << " to instance: " << this << std::endl;
     if(this == &source)
         return *this;
     // 1. Copy the data from the rvalue
@@ -125,6 +126,7 @@ ChatBot &ChatBot::operator=(ChatBot &&source) // Rule of Five 5: Move Assignment
     _currentNode = source._currentNode;
     _rootNode = source._rootNode;
     _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this); //Task5: move the chatBot handle here
     
     // 2. invalidate the source (rvalue) immediately after copying as copy is complete, as
     //    NOTICE: 'this' is responsible of the allocated data:
