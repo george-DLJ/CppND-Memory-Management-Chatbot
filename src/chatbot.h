@@ -25,20 +25,12 @@ public:
     // constructors / destructors
     ChatBot();                     // constructor WITHOUT memory allocation
     ChatBot(std::string filename); // constructor WITH memory allocation
-    ~ChatBot();     // Rule of Three/Five 1. Destructor 
+    ~ChatBot();
 
-    //// STUDENT CODE
-    ////
-    // Rule of Three: implement destructor, copy constructor or copy assignment operator:
-    ChatBot(const ChatBot &source); // Rule of Three 2: copy constructor
-    ChatBot &operator=(const ChatBot &source);     // Rule of Three 3: copy-asignment Operator  
-    // Rule of five: rule of three + implement move assigment operator,  
-    ChatBot(ChatBot &&source);  // Rule of Five 4: Move Constructor
-    ChatBot &operator=(ChatBot &&source);  // Rule of Five 5: Move Assignment Operator
-
-    
-    ////
-    //// EOF STUDENT CODE
+    ChatBot(const ChatBot &source); 
+    ChatBot &operator=(const ChatBot &source); 
+    ChatBot(ChatBot &&source);  
+    ChatBot &operator=(ChatBot &&source); 
 
     // getters / setters
     void SetCurrentNode(GraphNode *node);
